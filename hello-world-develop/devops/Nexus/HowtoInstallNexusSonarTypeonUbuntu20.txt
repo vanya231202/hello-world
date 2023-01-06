@@ -1,0 +1,260 @@
+
+			Howto Install Nexus Ubuntu 20:
+https://medium.com/@everton.araujo1985/install-sonatype-nexus-3-on-ubuntu-20-04-lts-562f8ba20b98
+
+Needs Java 1.8
+
+#apt install openjdk-8-jre-headless
+
+$ cat ~nexus/.bashrc
+JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64/"
+ export PATH=$JAVA_HOME/bin:$PATH
+  export JAVA_HOME
+
+
+
+			Setup Nginx reverse proxy:
+https://help.sonatype.com/repomanager3/installation/run-behind-a-reverse-proxy#RunBehindaReverseProxy-nginx
+
+
+			 Create different repository in Nexus:
+Configure Nexus repositories (video-lesson):
+https://www.udemy.com/course/devops-basics/learn/lecture/16185467#content
+or READ this:
+https://help.sonatype.com/repomanager3/formats/maven-repositories
+https://guides.sonatype.com/repo3/quick-start-guides/proxying-maven-and-npm/
+Part 2 - Proxying Maven
+
+			
+
+Create next repositories:
+1. Test-Maven-Snapshot 	(maven2 (hosted))
+2. Test-Maven-Release   (maven2 (hosted))
+3. Test-Maven-Central   (maven2 (proxy)) https://repo1.maven.org/maven2/   ( https://guides.sonatype.com/repo3/quick-start-guides/proxying-maven-and-npm/ )
+4. Test-Maven-Group	(maven2 (group))
+
+ 
+
+In your file system, open your settings.xml and change the contents of the snippet below. 
+You can find this file in .m2, e.g ~/.m2/settings.xml.
+NOTE: If you have an existing Maven configuration file (settings.xml) that you want to retain, back it up before doing any modifications.
+
+
+#vi ~/.m2/settings.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+ <!-- servers
+   | This is a list of authentication profiles, keyed by the server-id used within the system.
+   | Authentication profiles can be used whenever maven must make a connection to a remote server.
+   |-->
+  <servers>
+    <server>
+      <id>Test-Maven-Snapshot</id>
+      <username>admin</username>
+      <password>....</password>
+    </server>
+    <server>
+      <id>Test-Maven-Release</id>
+      <username>admin</username>
+      <password>...</password>
+    </server>
+    <server>
+      <id>Test-Maven-Central</id>
+      <username>admin</username>
+      <password>......</password>
+    </server>
+
+  </servers>
+
+
+	<mirrors>
+	  <mirror>
+	  <!--This sends everything else to /public -->
+	  <id>Test-Maven-Central</id>
+	  <name>Test-Maven-Central</name>
+	  <mirrorOf>*</mirrorOf>
+	  <url>http://nx.tehno.top/repository/Test-Maven-Central/</url>
+	  </mirror>
+	</mirrors>
+
+
+	<profiles>
+	  <profile>
+
+	  <id>nexus</id>
+	  <!--Enable snapshots for the built in central repo to direct -->
+	  <!--all requests to nexus via the mirror -->
+
+	  <repositories>
+	      <repository>
+	      <id>central</id>
+	      <url>http://central</url>
+	      <releases><enabled>true</enabled></releases>
+	      <snapshots><enabled>true</enabled></snapshots>
+	      </repository>
+	  </repositories>
+
+	  <pluginRepositories>
+	      <pluginRepository>
+	      <id>central</id>
+	      <url>http://central</url>
+	      <releases><enabled>true</enabled></releases>
+	      <snapshots><enabled>true</enabled></snapshots>
+	      </pluginRepository>
+	  </pluginRepositories>
+
+	  </profile>
+	</profiles>
+
+	<activeProfiles>
+	  <!--make the profile active all the time -->
+	  <activeProfile>nexus</activeProfile>
+	</activeProfiles>
+</settings>
+
+
+
+Update the POM file (pom.xml) of your project with the values below:
+
+<project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.example.project-name</groupId>
+  <artifactId>project-name</artifactId>
+  <version>1.0-SNAPSHOT</version>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.10</version>
+    </dependency>
+
+  </dependencies>
+</project>
+
+
+Deployment to a repository is configured in the pom.xml for the respective project 
+in the distributionManagement section. 
+Using the default repositories of the repository manager:
+
+<project>
+...
+<distributionManagement>
+    <repository>
+      <id>Test-Maven-Release</id>
+      <name>Releases</name>
+      <url>http://nx.tehno.top/repository/Test-Maven-Release/</url>
+    </repository>
+
+    <snapshotRepository>
+      <id>Test-Maven-Snapshot</id>
+      <name>Snapshot</name>
+      <url>http://nx.tehno.top/repository/Test-Maven-Snapshot/</url>
+    </snapshotRepository>
+  </distributionManagement>
+...
+
+
+The credentials used for the deployment are found in the server section of your settings.xml. 
+In the example below server contains nexus as the id, along with the default username and password: 
+
+  <servers>
+    <server>
+      <id>Test-Maven-Snapshot</id>
+      <username>admin</username>
+      <password>...</password>
+    </server>
+    <server>
+      <id>Test-Maven-Release</id>
+      <username>admin</username>
+      <password>.....</password>
+    </server>
+    <server>
+      <id>Test-Maven-Central</id>
+      <username>admin</username>
+      <password>....</password>
+    </server>
+
+
+
+
+Run the Maven build with the command:
+$ mvn package
+
+if errors:
+$ mvn package -e -X
+$ /opt/maven/apache-maven-3.6.3/bin/mvn clean test install deploy
+
+
+______________
+
+if some other from my team who want to use this project, they must put in Project pom.xml
+
+  <dependencies>
+    <dependency>
+	  <groupId>com.example.maven-project</groupId>
+	  <artifactId>maven-project</artifactId>
+	  <packaging>pom</packaging>
+	  <version>1.0-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+
+  <repositories>
+    <repository>
+      <id>Test-Maven-Group</id>
+      <name>Group</name>
+      <url>http://nx.tehno.top/repository/Test-Maven-Group/</url>
+    </repository>
+  </repositories>
+
+_______________________
+
+Jenkins
+
+The settings element in the settings.xml file contains elements used to define values which configure Maven execution in various ways, like the pom.xml, but should not be bundled to any specific project, or distributed to an audience. These include values such as the local repository location, alternate remote repository servers, and authentication information.
+There are two locations where a settings.xml file per default may live:
+
+    The Maven install - default: $M2_HOME/conf/settings.xml
+    A user's install - default: ${user.home}/.m2/settings.xml
+
+The former settings.xml are also called global settings, the latter settings.xml are referred to as user settings. If both files exists, their contents gets merged, with the user-specific settings.xml being dominant. 
+
+
+https://blog.sonatype.com/workflow-automation-publishing-artifacts-to-nexus-using-jenkins-pipelines
+Jenkins: Publish Maven Artifacts to Nexus OSS Using Pipelines or Maven Jobs: 
+https://dzone.com/articles/jenkins-publish-maven-artifacts-to-nexus-oss-using
+
+
+To create a new user, go to Dashboard > Server Administrator and Configuration > User > Create user. 
+Select Local user type which happens to be the default Realm:
+
+jenkins-user
+jenkinspassword
+
+
+In the Create User page
+    ID: Enter the desired ID; in our case, it is jenkins-user.
+    First Name: Enter the desired first name; in our case, it is Jenkins.
+    Last Name: Enter the desired second name; in our case, it is User.
+    Email: Enter your email address.
+    Status: Select Active from your drop-down menu.
+    Roles: Make sure that you grant the nx-admin role to your user.
+
+
+install and configure a few plugins for Nexus in Jenkins. 
+install Nexus Artifact Uploader and Pipeline Utility Steps.
+
+Maven docs:
+https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html
+https://tproger.ru/articles/maven-short-intro/
+
+
+
+
+

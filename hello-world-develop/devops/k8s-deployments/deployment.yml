@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hwapp-deployment
+  labels:
+    app: hwapp-label
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: hwapp-label
+  template:
+    metadata:
+      labels:
+        app: hwapp-label
+    spec:
+      containers:
+        - name: hwapp
+          image: nx.tehno.top/hello-world-app:hwapp-docker-tag
+          ports:
+            - containerPort: 8080
+      imagePullSecrets:
+        - name: nxregcred
