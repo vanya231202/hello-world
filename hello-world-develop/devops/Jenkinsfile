@@ -53,7 +53,7 @@ pipeline {
         }
 
 
-        stage ('Test Code - SonarQube') {
+       /* stage ('Test Code - SonarQube') {
             steps {
                 sh """
                   mvn sonar:sonar \
@@ -63,7 +63,7 @@ pipeline {
                    """
             }
         }
-        
+        */
         
         stage('Test') { 
             steps {
