@@ -33,13 +33,13 @@
     <repository>
       <id>Test-Maven-Release</id>
       <name>Releases</name>
-      <url>http://nx.tehno.top/repository/Test-Maven-Release/</url>
+      <url>116.203.95.65:8081/</url>
     </repository>
 
     <snapshotRepository>
       <id>Test-Maven-Snapshot</id>
       <name>Snapshot</name>
-      <url>http://116.203.95.65:8081</url>
+      <url>116.203.95.65:8081</url>
     </snapshotRepository>
   </distributionManagement>
 
