@@ -12,11 +12,11 @@ pipeline {
         NEXUS_VERSION = "nexus3"
         // This can be http or https
         NEXUS_PROTOCOL = "http"
-        NEXUS_URL = "nx.tehno.top"
+        NEXUS_URL = "http://116.203.95.65:8081"
         // Nexus Repository where we will upload the artifact
         NEXUS_REPOSITORY = "Test-Maven-Snapshot"
         // Jenkins credential id to authenticate to Nexus OSS
-        NEXUS_CREDENTIAL_ID = "nexus-user-credentials"
+        NEXUS_CREDENTIAL_ID = "nexus-common-creds"
         // Jenkins credentials for Nexus Docker Registry
         DOCKER_TAG = "${getLatestCommitId()}"
         //NEXUS_DOCKER_REGISTRY_HOST = "134.209.238.66:85"
