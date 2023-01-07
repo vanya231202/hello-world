@@ -39,7 +39,7 @@
     <snapshotRepository>
       <id>Test-Maven-Snapshot</id>
       <name>Snapshot</name>
-      <url>http://nx.tehno.top/repository/Test-Maven-Snapshot/</url>
+      <url>http://116.203.95.65:8081</url>
     </snapshotRepository>
   </distributionManagement>
 
