@@ -25,7 +25,7 @@ pipeline {
         CONTAINER_NAME = "hello-world-app"
         K8S_CLIENT_IP_ADDRESS = "18.195.96.234"
         NEXUS_DOCKER_REGISTRY_CREDS_USR = "docker-user"
-        NEXUS_DOCKER_REGISTRY_CREDS_PSW = "farlofarlo123"
+        NEXUS_DOCKER_REGISTRY_CREDS_PSW =
     }
     stages {
         stage ('Initialize') {
