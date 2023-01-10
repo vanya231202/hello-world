@@ -20,10 +20,12 @@ pipeline {
         // Jenkins credentials for Nexus Docker Registry
         DOCKER_TAG = "${getLatestCommitId()}"
         //NEXUS_DOCKER_REGISTRY_HOST = "134.209.238.66:85"
-        NEXUS_DOCKER_REGISTRY_HOST = "nx.tehno.top"
+        NEXUS_DOCKER_REGISTRY_HOST = "116.203.95.65:8081"
         //NEXUS_DOCKER_REGISTRY_CREDS = credentials('nexus-docker-registry-user')
         CONTAINER_NAME = "hello-world-app"
         K8S_CLIENT_IP_ADDRESS = "18.195.96.234"
+        NEXUS_DOCKER_REGISTRY_CREDS_USR = "docker-user"
+        NEXUS_DOCKER_REGISTRY_CREDS_PSW = "farlofarlo123"
     }
     stages {
         stage ('Initialize') {
