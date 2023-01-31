@@ -12,20 +12,17 @@ pipeline {
         NEXUS_VERSION = "nexus3"
         // This can be http or https
         NEXUS_PROTOCOL = "http"
-        NEXUS_URL = "116.203.95.65:8081"
+        NEXUS_URL = "nx.puper.xyz:8081"
         // Nexus Repository where we will upload the artifact
         NEXUS_REPOSITORY = "Test-Maven-Snapshot"
         // Jenkins credential id to authenticate to Nexus OSS
         NEXUS_CREDENTIAL_ID = "nexus-common-creds"
         // Jenkins credentials for Nexus Docker Registry
         DOCKER_TAG = "${getLatestCommitId()}"
-        //NEXUS_DOCKER_REGISTRY_HOST = "134.209.238.66:85"
-        NEXUS_DOCKER_REGISTRY_HOST = "116.203.183.172:8082"
-        //NEXUS_DOCKER_REGISTRY_CREDS = credentials('nexus-docker-registry-user')
+        NEXUS_DOCKER_REGISTRY_HOST = "dh.puper.xyz:8082"
         CONTAINER_NAME = "hello-world-app"
-        K8S_CLIENT_IP_ADDRESS = "10.0.1.158"
-        NEXUS_DOCKER_REGISTRY_CREDS_USR = "docker-user"
-        NEXUS_DOCKER_REGISTRY_CREDS_PSW = "farlofarlo123"
+        NEXUS_DOCKER_REGISTRY_CREDS = credentials('nexus-docker-registry-user')
+        K8S_CLIENT_IP_ADDRESS = "18.195.96.234"
     }
     stages {
         stage ('Initialize') {
